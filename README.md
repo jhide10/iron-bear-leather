@@ -21,11 +21,14 @@ images/                           photography, logo, bench video
   tooled-*.jpg                    tooled sunflower purse (work in progress)
   graphic-*.jpg                   the client's own Facebook ad graphics (unused on
                                   the page — kept here in case you want them)
-  bench-cutting.mp4               22s muted loop cut from his Cutting.mp4 (cropped
+  bench-pattern.mp4                20s muted loop cut from his Pattern.mp4 (cropped
+                                  to 5:4 off the portrait original)
+  bench-pattern-poster.jpg         poster frame for it
+  bench-cutting.mp4                22s muted loop cut from his Cutting.mp4 (cropped
                                   to 5:4 off the portrait original, head out of frame)
-  bench-cutting-poster.jpg        poster frame for it
-  bench-stitching.mp4             24s muted loop cut from his 66s Stitching.mp4
-  bench-stitching-poster.jpg      poster frame for it
+  bench-cutting-poster.jpg         poster frame for it
+  bench-stitching.mp4              24s muted loop cut from his 66s Stitching.mp4
+  bench-stitching-poster.jpg       poster frame for it
 SHOPIFY-NOTES.md                  how each section maps to Shopify
 ```
 
@@ -45,10 +48,11 @@ Nine scroll-driven moments, plain CSS and Intersection Observer — no animation
 3. **Marquee band** — infinite scroll of craft terms, pauses on hover.
 4. **Collection** — horizontal scroller with scroll-snap, arrow buttons, pointer drag
    and a progress rail.
-5. **The Making** — scroll-pinned. The viewport locks while four stages advance; each
-   cross-fades its own media and the step rail tracks along. Stages 01 (cutting) and
-   02 (stitching) are his own bench videos; each only starts downloading when its
-   stage becomes active, so the page still loads fast.
+5. **The Making** — scroll-pinned. The viewport locks while four stages advance
+   (Pattern → Cut → Stitch → Finished piece); each cross-fades its own media and the
+   step rail tracks along. Stages 01–03 are his own bench videos, each only starting
+   to download once its stage becomes active, so the page still loads fast. Stage 04
+   is a photo of the finished wallets.
 6. **The Iron Bear Standard** — three pillars plus numbers that count up on first view.
 7. **Customers are saying** — the six real reviews, swipeable / draggable.
 8. **Tooled purse teaser** and **CTA band**.
@@ -81,12 +85,11 @@ renders as static content.
   Shopify or Klaviyo behind it.
 - **"Add to cart" buttons do nothing.** They are visual only until this is on Shopify.
 - Prices are invented placeholders.
-- The bench videos were trimmed and compressed for the web (0.9 MB and 1.7 MB,
-  H.264 main/4.0 for maximum phone compatibility). The originals stay in the folder
-  above. `Cutting.mp4` and `Pattern.mp4` are byte-identical — the same file uploaded
-  twice — so there are two distinct clips, not three.
-- Stage 03 ("Tool the panel") and stage 04 ("Burnish and finish") are still photos.
-  If he has clips of tooling and of edge burnishing, they drop straight in: same
-  `<video>` markup as stages 01 and 02.
+- The three bench videos (pattern, cutting, stitching) were trimmed to ~20s loops and
+  compressed for the web (under 1 MB each, H.264 main/4.0 for maximum phone
+  compatibility). The originals stay in the folder above.
+- Stage 04 ("Finished piece") is a photo, not a video — didn't have footage for it.
+  If he sends a clip of the final burnish/inspection, it drops straight in: same
+  `<video>` markup as stages 01–03.
 - Google Fonts (Oswald, Barlow, Caveat Brush) load from the network. Offline the page
   still works — it falls back to condensed system fonts and the headline auto-fits.
