@@ -158,7 +158,7 @@ body.locked{overflow:hidden}
 .hero .grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);
   gap:clamp(28px,5vw,72px);align-items:center;position:relative}
 .hero .grid>*{min-width:0}
-.hero h1{font-size:clamp(42px,8.4vw,116px);letter-spacing:-.01em}
+.hero h1{font-size:clamp(50px,8.4vw,116px);letter-spacing:-.01em}
 .mask{overflow:hidden;display:block}
 /* the mask only needs to clip while the intro lines rise; afterwards it is
    released so an unexpected font can never cut a headline off */
@@ -534,11 +534,14 @@ footer{background:var(--coal);color:var(--cream);padding-block:clamp(46px,6vw,80
       <div class="stage-copy" id="stageCopy">
 
         <div class="st on">
-          <div class="m-media"><img src="images/tooled-panel-flat.jpg" alt="Tooled leather panel"></div>
+          <div class="m-media">
+            <video src="images/bench-cutting.mp4" poster="images/bench-cutting-poster.jpg"
+                   muted loop playsinline preload="none"></video>
+          </div>
           <div class="num">01</div>
-          <h3>Cut and tool</h3>
-          <p>Full grain leather picked by hand off the hide and cut to pattern — then tooled
-            where the piece calls for it, one stamped impression at a time.</p>
+          <h3>Cut by hand</h3>
+          <p>Full grain leather picked off the hide and cut to pattern with a knife and a
+            steel rule. Every panel is cut one at a time — no press, no die.</p>
         </div>
 
         <div class="st">
@@ -553,11 +556,11 @@ footer{background:var(--coal);color:var(--cream);padding-block:clamp(46px,6vw,80
         </div>
 
         <div class="st">
-          <div class="m-media"><img src="images/beartrap-closed-hand.jpg" alt="Bear Trap wallet closed"></div>
+          <div class="m-media"><img src="images/tooled-purse-bench.jpg" alt="Hand tooled panel on the workbench"></div>
           <div class="num">03</div>
-          <h3>Set the hardware</h3>
-          <p>Solid snaps set and seated by hand so the flap closes the same on day one and
-            year ten. Contrast thread is picked to order.</p>
+          <h3>Tool the panel</h3>
+          <p>Where a piece calls for it, the panel is cased and tooled at the bench —
+            basketweave and hand-cut florals, one stamped impression at a time.</p>
         </div>
 
         <div class="st">
@@ -571,19 +574,21 @@ footer{background:var(--coal);color:var(--cream);padding-block:clamp(46px,6vw,80
         <div class="steps" id="steps">
           <button data-i="0" class="on">01 Cut</button>
           <button data-i="1">02 Stitch</button>
-          <button data-i="2">03 Hardware</button>
+          <button data-i="2">03 Tool</button>
           <button data-i="3">04 Finish</button>
         </div>
       </div>
 
       <div class="stage-media" id="stageMedia">
-        <div class="md on"><img src="images/tooled-panel-flat.jpg" alt="Tooled leather panel"></div>
-        <div class="md">
-          <video id="benchVid" src="images/bench-stitching.mp4"
-                 poster="images/bench-stitching-poster.jpg" muted loop playsinline
-                 preload="none"></video>
+        <div class="md on">
+          <video src="images/bench-cutting.mp4" poster="images/bench-cutting-poster.jpg"
+                 muted loop playsinline preload="none"></video>
         </div>
-        <div class="md"><img src="images/beartrap-closed-hand.jpg" alt="Bear Trap wallet closed in hand"></div>
+        <div class="md">
+          <video src="images/bench-stitching.mp4" poster="images/bench-stitching-poster.jpg"
+                 muted loop playsinline preload="none"></video>
+        </div>
+        <div class="md"><img src="images/tooled-purse-bench.jpg" alt="Hand tooled panel on the workbench"></div>
         <div class="md"><img src="images/beartrap-stack-hand.jpg" alt="Two finished Bear Trap wallets"></div>
       </div>
     </div>
@@ -914,8 +919,7 @@ function parallax(){
 const making = document.querySelector(".making"),
       sts = [...document.querySelectorAll("#stageCopy .st")],
       mds = [...document.querySelectorAll("#stageMedia .md")],
-      stepBtns = [...document.querySelectorAll("#steps button")],
-      bench = document.getElementById("benchVid");
+      stepBtns = [...document.querySelectorAll("#steps button")];
 let stage = -1;
 /* preload="none" keeps the video off the critical path, but flipping preload
    afterwards does NOT start a fetch — load() has to be called once. */
@@ -932,7 +936,11 @@ function setStage(i){
   sts.forEach((s,n) => s.classList.toggle("on", n === i));
   mds.forEach((m,n) => m.classList.toggle("on", n === i));
   stepBtns.forEach((b,n) => b.classList.toggle("on", n === i));
-  if (bench) { i === 1 ? playVideo(bench) : bench.pause(); }
+  // play whichever video belongs to the active stage, pause the rest
+  mds.forEach((m,n) => {
+    const v = m.querySelector("video"); if (!v) return;
+    n === i ? playVideo(v) : v.pause();
+  });
 }
 function pinScroll(){
   if (RM || innerWidth <= 1000) return;
