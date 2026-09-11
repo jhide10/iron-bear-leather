@@ -54,6 +54,7 @@ body{
   margin:0;background:var(--cream);color:var(--ink);
   font-family:var(--body);font-size:17px;line-height:1.6;
   overflow-x:hidden;
+  -webkit-tap-highlight-color:rgba(200,135,63,.25);
 }
 img,video{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
@@ -143,6 +144,7 @@ nav.main a:hover::after{width:100%}
 #mob{position:fixed;inset:0;z-index:90;background:var(--ink);color:var(--cream);
   display:none;flex-direction:column;justify-content:center;gap:6px;padding:var(--pad)}
 #mob.open{display:flex}
+body.locked{overflow:hidden}
 #mob a{font-family:var(--display);font-weight:700;font-size:clamp(30px,9vw,46px);
   text-transform:uppercase;padding-block:8px;border-bottom:1px solid var(--line-dark)}
 #mob .x{position:absolute;top:18px;right:var(--pad);font-size:34px;line-height:1}
@@ -217,7 +219,8 @@ body.loaded .mask:nth-of-type(2) span{transition-delay:.1s}
 
 .rail-wrap{position:relative}
 .scroller{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding-bottom:22px;scrollbar-width:none;cursor:grab}
+  padding-bottom:22px;scrollbar-width:none;cursor:grab;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .scroller::-webkit-scrollbar{display:none}
 .scroller.drag{cursor:grabbing;scroll-snap-type:none}
 .card{flex:0 0 clamp(250px,27vw,340px);scroll-snap-align:start}
@@ -303,7 +306,8 @@ body.loaded .mask:nth-of-type(2) span{transition-delay:.1s}
 .score small{display:block;font-family:var(--display);font-size:11px;letter-spacing:.22em;
   text-transform:uppercase;color:rgba(244,237,226,.6);margin-top:4px}
 .rv-scroller{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
-  margin-top:clamp(28px,4vw,48px);padding-bottom:20px;scrollbar-width:none;cursor:grab}
+  margin-top:clamp(28px,4vw,48px);padding-bottom:20px;scrollbar-width:none;cursor:grab;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .rv-scroller::-webkit-scrollbar{display:none}
 .rv{flex:0 0 min(400px,82vw);scroll-snap-align:start;background:var(--ink);
   border:1px solid var(--line-dark);padding:clamp(24px,2.6vw,34px);display:flex;
@@ -840,9 +844,12 @@ function headerTone(){
 
 /* ---- mobile menu ---- */
 const mob = document.getElementById("mob");
-document.getElementById("burger").onclick = () => mob.classList.add("open");
-document.getElementById("mobX").onclick  = () => mob.classList.remove("open");
-mob.querySelectorAll("a").forEach(a => a.onclick = () => mob.classList.remove("open"));
+const openMenu  = () => { mob.classList.add("open");  document.body.classList.add("locked"); };
+const closeMenu = () => { mob.classList.remove("open"); document.body.classList.remove("locked"); };
+document.getElementById("burger").onclick = openMenu;
+document.getElementById("mobX").onclick  = closeMenu;
+mob.querySelectorAll("a").forEach(a => a.onclick = closeMenu);
+addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
 
 /* ---- hero parallax ---- */
 const pars = [...document.querySelectorAll("[data-par]")];
@@ -874,29 +881,33 @@ function parallax(){
   addEventListener("resize", rail);
   rail();
 
-  // pointer drag
+  // pointer drag — MOUSE ONLY. On touch the browser's own momentum scrolling and
+  // scroll-snap are better than anything we can fake, and hijacking them causes jitter.
   let down = false, x0 = 0, l0 = 0, moved = 0;
   sc.addEventListener("pointerdown", e => {
-    if (e.target.closest("button")) return;
+    if (e.pointerType !== "mouse" || e.target.closest("button")) return;
     down = true; moved = 0; x0 = e.clientX; l0 = sc.scrollLeft; sc.classList.add("drag");
   });
   addEventListener("pointermove", e => {
     if (!down) return;
     const d = e.clientX - x0; moved = Math.abs(d); sc.scrollLeft = l0 - d;
-  });
+  }, { passive:true });
   addEventListener("pointerup", () => {
     if (!down) return; down = false; sc.classList.remove("drag");
-  });
+  }, { passive:true });
   sc.addEventListener("click", e => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
 
-/* same drag behaviour for the reviews rail */
+/* same drag behaviour for the reviews rail — again, mouse only */
 (function(){
   const sc = document.getElementById("rvScroller");
   let down = false, x0 = 0, l0 = 0;
-  sc.addEventListener("pointerdown", e => { down = true; x0 = e.clientX; l0 = sc.scrollLeft; sc.style.cursor="grabbing"; });
-  addEventListener("pointermove", e => { if (down) sc.scrollLeft = l0 - (e.clientX - x0); });
-  addEventListener("pointerup", () => { down = false; sc.style.cursor="grab"; });
+  sc.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse") return;
+    down = true; x0 = e.clientX; l0 = sc.scrollLeft; sc.style.cursor = "grabbing";
+  });
+  addEventListener("pointermove", e => { if (down) sc.scrollLeft = l0 - (e.clientX - x0); }, { passive:true });
+  addEventListener("pointerup", () => { down = false; sc.style.cursor = "grab"; }, { passive:true });
 })();
 
 /* ---- scroll-pinned "The Making" ---- */
@@ -906,13 +917,22 @@ const making = document.querySelector(".making"),
       stepBtns = [...document.querySelectorAll("#steps button")],
       bench = document.getElementById("benchVid");
 let stage = -1;
+/* preload="none" keeps the video off the critical path, but flipping preload
+   afterwards does NOT start a fetch — load() has to be called once. */
+function playVideo(v){
+  if (!v) return;
+  if (!v.dataset.armed) { v.dataset.armed = "1"; v.preload = "auto"; v.load(); }
+  v.muted = true;                       // iOS needs the property, not just the attribute
+  const go = () => v.play().catch(()=>{});
+  v.readyState >= 2 ? go() : v.addEventListener("loadeddata", go, { once:true });
+}
 function setStage(i){
   if (i === stage) return;
   stage = i;
   sts.forEach((s,n) => s.classList.toggle("on", n === i));
   mds.forEach((m,n) => m.classList.toggle("on", n === i));
   stepBtns.forEach((b,n) => b.classList.toggle("on", n === i));
-  if (bench) { if (i === 1) { bench.preload = "auto"; bench.play().catch(()=>{}); } else bench.pause(); }
+  if (bench) { i === 1 ? playVideo(bench) : bench.pause(); }
 }
 function pinScroll(){
   if (RM || innerWidth <= 1000) return;
@@ -931,8 +951,8 @@ stepBtns.forEach(b => b.onclick = () => {
 if (innerWidth <= 1000) {
   const vio = new IntersectionObserver(es => es.forEach(e => {
     const v = e.target.querySelector("video"); if (!v) return;
-    if (e.isIntersecting) { v.preload = "auto"; v.play().catch(()=>{}); } else v.pause();
-  }), { threshold:.4 });
+    if (e.isIntersecting) playVideo(v); else v.pause();
+  }), { threshold:.25 });
   sts.forEach(s => vio.observe(s));
 }
 
