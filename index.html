@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iron Bear Leather — Handcrafted Leather Goods | Redwater, Texas</title>
+<meta name="description" content="Iron Bear Leather makes enduring pieces by hand, built for the road and refined for everyday carry. Full grain leather, hand stitched in Redwater, Texas.">
+<link rel="icon" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Caveat+Brush&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   IRON BEAR LEATHER — single-file prototype
+   Flat colours only. No gradients anywhere.
+   Sections in order:
+     00 tokens / base
+     01 preloader
+     02 announcement + header
+     03 hero
+     04 marquee band
+     05 collection (horizontal scroller)
+     06 the making (scroll-pinned + bench video)
+     07 the iron bear standard (stats)
+     08 customers are saying (real reviews)
+     09 tooled purse teaser
+     10 cta band
+     11 bear den signup
+     12 footer
+   ============================================================ */
+
+/* ---------- 00 tokens ---------- */
+:root{
+  --ink:#141110;
+  --coal:#1C1815;
+  --bark:#26201B;
+  --cream:#F4EDE2;
+  --bone:#E6DBC9;
+  --tan:#C8873F;
+  --tan-dark:#A2682A;
+  --moss:#3E4A3B;
+  --rust:#9C4A22;
+  --line-dark:rgba(244,237,226,.16);
+  --line-light:rgba(20,17,16,.14);
+  --pad:clamp(20px,5vw,72px);
+  --display:"Oswald","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --script:"Caveat Brush","Bradley Hand",cursive;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--cream);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.6;
+  overflow-x:hidden;
+}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3,h4{font-family:var(--display);font-weight:700;margin:0;line-height:.94;
+  text-transform:uppercase;letter-spacing:.005em}
+p{margin:0}
+::selection{background:var(--tan);color:var(--ink)}
+
+.wrap{max-width:1360px;margin:0 auto;padding-inline:var(--pad)}
+.dark{background:var(--ink);color:var(--cream)}
+.eyebrow{
+  font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.28em;
+  text-transform:uppercase;display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--tan);flex:none}
+.script{font-family:var(--script);text-transform:none;letter-spacing:0;color:var(--tan)}
+.stitch{border:2px dashed rgba(244,237,226,.3)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.16em;
+  text-transform:uppercase;padding:16px 30px;border:2px solid transparent;
+  background:var(--tan);color:#171310;transition:background .22s,color .22s,transform .22s;
+}
+.btn:hover{background:#DCA05C;transform:translateY(-2px)}
+.btn--ghost{background:none;color:inherit;border-color:currentColor}
+.btn--ghost:hover{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.btn--ink{background:var(--ink);color:var(--cream)}
+.btn--ink:hover{background:#2C2521}
+.btn .arw{display:inline-block;transition:transform .22s}
+.btn:hover .arw{transform:translateX(4px)}
+
+/* reveal */
+[data-rv]{opacity:0;transform:translateY(28px);
+  transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+[data-rv].in{opacity:1;transform:none}
+
+/* reading progress */
+#rp{position:fixed;top:0;left:0;height:3px;width:0;background:var(--tan);z-index:120;
+  transition:width .1s linear}
+
+/* ---------- 01 preloader ---------- */
+#pre{position:fixed;inset:0;z-index:200;background:var(--ink);color:var(--cream);
+  display:grid;place-items:center;transition:opacity .6s .25s,visibility .6s .25s}
+#pre .pl{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center}
+#pre img{width:104px;height:104px;border-radius:50%;animation:spin 14s linear infinite}
+#pre .nm{font-family:var(--display);font-weight:600;letter-spacing:.4em;font-size:13px;
+  text-transform:uppercase;padding-left:.4em}
+#pre .rail{width:190px;height:2px;background:rgba(244,237,226,.2)}
+#pre .rail i{display:block;height:100%;width:0;background:var(--tan);transition:width .25s}
+body.loaded #pre{opacity:0;visibility:hidden}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- 02 announcement + header ---------- */
+.ann{background:var(--tan);color:#1A1512;overflow:hidden;position:relative;z-index:60}
+.ann .track{display:flex;width:max-content;animation:slide 34s linear infinite}
+.ann span{font-family:var(--display);font-weight:600;font-size:11.5px;letter-spacing:.24em;
+  text-transform:uppercase;padding:9px 26px;white-space:nowrap}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+header{position:sticky;top:0;z-index:80;background:var(--ink);color:var(--cream);
+  border-bottom:1px solid var(--line-dark);transition:background .3s,color .3s}
+header.light{background:var(--cream);color:var(--ink);border-bottom-color:var(--line-light)}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding-block:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:44px;height:44px;border-radius:50%;flex:none}
+.brand b{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.16em;
+  text-transform:uppercase;line-height:1.05;display:block}
+.brand small{font-family:var(--display);font-weight:400;font-size:9.5px;letter-spacing:.3em;
+  text-transform:uppercase;opacity:.62;display:block}
+nav.main{display:flex;gap:30px}
+nav.main a{font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;position:relative;padding-block:6px}
+nav.main a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;
+  background:var(--tan);transition:width .25s}
+nav.main a:hover::after{width:100%}
+.hd .btn{padding:12px 22px;font-size:12.5px}
+.burger{display:none;width:42px;height:42px;place-items:center}
+.burger i{display:block;width:22px;height:2px;background:currentColor;position:relative}
+.burger i::before,.burger i::after{content:"";position:absolute;left:0;width:22px;height:2px;
+  background:currentColor}
+.burger i::before{top:-7px}.burger i::after{top:7px}
+
+#mob{position:fixed;inset:0;z-index:90;background:var(--ink);color:var(--cream);
+  display:none;flex-direction:column;justify-content:center;gap:6px;padding:var(--pad)}
+#mob.open{display:flex}
+#mob a{font-family:var(--display);font-weight:700;font-size:clamp(30px,9vw,46px);
+  text-transform:uppercase;padding-block:8px;border-bottom:1px solid var(--line-dark)}
+#mob .x{position:absolute;top:18px;right:var(--pad);font-size:34px;line-height:1}
+
+/* ---------- 03 hero ---------- */
+.hero{background:var(--ink);color:var(--cream);position:relative;overflow:hidden;
+  padding-block:clamp(48px,8vw,90px) clamp(60px,9vw,110px)}
+.hero::before{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(90deg,rgba(244,237,226,.045) 0 1px,transparent 1px 128px);
+  pointer-events:none}
+.hero .grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);
+  gap:clamp(28px,5vw,72px);align-items:center;position:relative}
+.hero .grid>*{min-width:0}
+.hero h1{font-size:clamp(42px,8.4vw,116px);letter-spacing:-.01em}
+.mask{overflow:hidden;display:block}
+/* the mask only needs to clip while the intro lines rise; afterwards it is
+   released so an unexpected font can never cut a headline off */
+.hero h1.free .mask{overflow:visible}
+.mask span{display:block;transform:translateY(108%);
+  transition:transform 1.05s cubic-bezier(.16,.84,.28,1)}
+body.loaded .mask span{transform:none}
+body.loaded .mask:nth-of-type(2) span{transition-delay:.1s}
+.hero .lede{max-width:46ch;margin-top:24px;font-size:clamp(16px,1.5vw,19px);
+  color:rgba(244,237,226,.76)}
+.hero .acts{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.hero .eyebrow{margin-bottom:22px;color:rgba(244,237,226,.8)}
+
+.stack{position:relative;aspect-ratio:4/5}
+.stack figure{margin:0;position:absolute;overflow:hidden;background:var(--bark)}
+.stack img{width:100%;height:100%;object-fit:cover}
+.fig-a{inset:0 14% 8% 0;border:1px solid var(--line-dark)}
+.fig-b{width:46%;aspect-ratio:1;right:0;bottom:0;border:6px solid var(--ink);outline:1px solid var(--line-dark)}
+.float-a{animation:fa 9s ease-in-out infinite}
+.float-b{animation:fb 7s ease-in-out infinite}
+@keyframes fa{50%{transform:translateY(-14px)}}
+@keyframes fb{50%{transform:translateY(12px)}}
+
+.seal{position:absolute;left:-54px;bottom:44px;width:132px;height:132px;z-index:3}
+.seal svg{width:100%;height:100%;animation:spin 22s linear infinite}
+.seal text{font-family:var(--display);font-size:12.4px;font-weight:600;letter-spacing:.18em;
+  fill:var(--cream);text-transform:uppercase}
+.seal .core{position:absolute;inset:26px;border-radius:50%;overflow:hidden}
+.seal .core img{width:100%;height:100%;object-fit:cover}
+
+.cue{position:absolute;left:var(--pad);bottom:14px;display:flex;align-items:center;gap:12px;
+  font-family:var(--display);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(244,237,226,.6)}
+.cue i{display:block;width:1px;height:34px;background:rgba(244,237,226,.35);position:relative;
+  overflow:hidden}
+.cue i::after{content:"";position:absolute;top:-34px;left:0;width:1px;height:34px;
+  background:var(--tan);animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{60%,100%{transform:translateY(68px)}}
+
+/* ---------- 04 marquee band ---------- */
+.band{background:var(--tan);color:#1A1512;overflow:hidden;border-block:3px solid var(--ink)}
+.band .track{display:flex;width:max-content;animation:slide 30s linear infinite}
+.band:hover .track{animation-play-state:paused}
+.band span{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.4vw,44px);
+  letter-spacing:.04em;text-transform:uppercase;padding:16px 24px;white-space:nowrap;
+  display:flex;align-items:center;gap:24px}
+.band span::after{content:"";width:11px;height:11px;background:#1A1512;
+  transform:rotate(45deg);flex:none}
+
+/* ---------- 05 collection ---------- */
+.sec{padding-block:clamp(64px,9vw,124px)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:26px 40px;
+  flex-wrap:wrap;margin-bottom:clamp(30px,4vw,54px)}
+.sec-head>div{flex:1 1 460px;min-width:0}
+.sec-head h2{font-size:clamp(34px,5.4vw,76px)}
+.sec-head p{flex:0 1 380px;max-width:42ch;color:rgba(20,17,16,.66)}
+.dark .sec-head p{color:rgba(244,237,226,.7)}
+
+.rail-wrap{position:relative}
+.scroller{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding-bottom:22px;scrollbar-width:none;cursor:grab}
+.scroller::-webkit-scrollbar{display:none}
+.scroller.drag{cursor:grabbing;scroll-snap-type:none}
+.card{flex:0 0 clamp(250px,27vw,340px);scroll-snap-align:start}
+.card .ph{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--bone)}
+.card .ph img{width:100%;height:100%;object-fit:cover;
+  transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .55s}
+.card:hover .ph img{transform:scale(1.06)}
+.card .ph .tag{position:absolute;top:12px;left:12px;background:var(--ink);color:var(--cream);
+  font-family:var(--display);font-size:10.5px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;padding:7px 12px}
+.card .ph .tag.soon{background:var(--moss)}
+.card h3{font-size:21px;margin-top:18px}
+.card .meta{display:flex;justify-content:space-between;gap:14px;align-items:baseline;
+  margin-top:8px;border-top:1px dashed var(--line-light);padding-top:10px}
+.dark .card .meta{border-top-color:var(--line-dark)}
+.card .desc{font-size:14.5px;color:rgba(20,17,16,.64);margin-top:6px}
+.card .price{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.04em;
+  white-space:nowrap}
+.card .cta{margin-top:14px;width:100%;justify-content:center;padding:13px 18px;font-size:12.5px;
+  background:none;border:2px solid var(--ink);color:var(--ink);display:inline-flex;gap:8px;
+  align-items:center;font-family:var(--display);font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;transition:background .22s,color .22s}
+.card .cta:hover{background:var(--ink);color:var(--cream)}
+
+.rail-ui{display:flex;align-items:center;gap:18px;margin-top:10px}
+.rail{flex:1;height:2px;background:var(--line-light)}
+.rail i{display:block;height:100%;width:22%;background:var(--ink);transition:transform .15s}
+.arrows{display:flex;gap:8px}
+.arrows button{width:46px;height:46px;border:2px solid var(--ink);display:grid;place-items:center;
+  transition:background .2s,color .2s}
+.arrows button:hover{background:var(--ink);color:var(--cream)}
+.arrows button[disabled]{opacity:.28;pointer-events:none}
+
+/* ---------- 06 the making ---------- */
+.making{position:relative;height:420svh;background:var(--ink);color:var(--cream)}
+.pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;
+  justify-content:center;overflow:hidden}
+.pin .inner{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:clamp(26px,5vw,70px);align-items:center;width:100%}
+.stage-copy{position:relative;min-height:370px}
+.stage-copy .st{position:absolute;inset:0 0 86px 0;opacity:0;transform:translateY(26px);
+  transition:opacity .5s,transform .5s;pointer-events:none}
+.stage-copy .st.on{opacity:1;transform:none}
+.stage-copy .num{font-family:var(--display);font-weight:700;font-size:clamp(56px,7vw,96px);
+  color:transparent;-webkit-text-stroke:2px var(--tan);line-height:1;margin-bottom:8px}
+.stage-copy h3{font-size:clamp(30px,4.2vw,56px);margin-bottom:14px}
+.stage-copy p{color:rgba(244,237,226,.74);max-width:40ch}
+.stage-media{position:relative;aspect-ratio:5/4;overflow:hidden;background:var(--bark);
+  border:1px solid var(--line-dark)}
+.stage-media .md{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+.stage-media .md.on{opacity:1}
+.stage-media img,.stage-media video{width:100%;height:100%;object-fit:cover}
+.steps{display:flex;gap:0;position:absolute;left:0;right:0;bottom:0;
+  border-top:1px solid var(--line-dark)}
+.steps button{flex:1;text-align:left;padding:14px 10px 0;font-family:var(--display);
+  font-weight:600;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(244,237,226,.45);border-top:2px solid transparent;margin-top:-1px;
+  transition:color .3s,border-color .3s}
+.steps button.on{color:var(--cream);border-top-color:var(--tan)}
+.making-head{position:absolute;top:clamp(92px,13vh,130px);left:0;right:0}
+
+/* ---------- 07 standard ---------- */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2.4vw,32px);
+  margin-top:clamp(30px,4vw,52px)}
+.pillar{border:2px solid var(--line-light);padding:clamp(22px,2.6vw,34px)}
+.pillar .ic{width:42px;height:42px;border:2px solid var(--ink);display:grid;place-items:center;
+  margin-bottom:18px}
+.pillar h3{font-size:19px;margin-bottom:10px}
+.pillar p{font-size:15px;color:rgba(20,17,16,.66)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  margin-top:clamp(34px,4vw,56px);border-top:2px solid var(--ink);padding-top:26px}
+.stat b{display:block;font-family:var(--display);font-weight:700;
+  font-size:clamp(34px,4.6vw,62px);line-height:1}
+.stat span{font-family:var(--display);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(20,17,16,.6)}
+
+/* ---------- 08 reviews ---------- */
+.reviews{background:var(--bark);color:var(--cream)}
+.rv-top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.score{display:flex;align-items:center;gap:16px}
+.score b{font-family:var(--display);font-weight:700;font-size:clamp(44px,6vw,74px);line-height:1}
+.score .stars{color:var(--tan);font-size:19px;letter-spacing:.12em}
+.score small{display:block;font-family:var(--display);font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(244,237,226,.6);margin-top:4px}
+.rv-scroller{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin-top:clamp(28px,4vw,48px);padding-bottom:20px;scrollbar-width:none;cursor:grab}
+.rv-scroller::-webkit-scrollbar{display:none}
+.rv{flex:0 0 min(400px,82vw);scroll-snap-align:start;background:var(--ink);
+  border:1px solid var(--line-dark);padding:clamp(24px,2.6vw,34px);display:flex;
+  flex-direction:column;gap:16px}
+.rv .vf{display:inline-flex;align-items:center;gap:7px;font-family:var(--display);font-size:10.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--tan)}
+.rv .vf::before{content:"";width:14px;height:14px;background:var(--tan);
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.rv p{font-size:16px;line-height:1.62;color:rgba(244,237,226,.88);flex:1}
+.rv .who{font-family:var(--display);font-weight:600;font-size:13.5px;letter-spacing:.14em;
+  text-transform:uppercase}
+.rv .prod{font-size:13px;color:rgba(244,237,226,.55);border-top:1px dashed var(--line-dark);
+  padding-top:12px}
+
+/* ---------- 09 tooled teaser ---------- */
+.teaser{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch}
+.teaser .pic{aspect-ratio:1;overflow:hidden;background:var(--bone)}
+.teaser .pic img{width:100%;height:100%;object-fit:cover}
+.teaser .txt{background:var(--moss);color:var(--cream);display:flex;flex-direction:column;
+  justify-content:center;gap:18px;padding:clamp(30px,5vw,70px)}
+.teaser h2{font-size:clamp(32px,4.6vw,62px)}
+.teaser p{color:rgba(244,237,226,.8);max-width:38ch}
+
+/* ---------- 10 cta band ---------- */
+.ctab{background:var(--tan);color:#1A1512;text-align:center}
+.ctab h2{font-size:clamp(34px,6vw,86px);max-width:18ch;margin-inline:auto}
+.ctab p{max-width:56ch;margin:22px auto 0;font-size:17px}
+.ctab .kick{font-family:var(--display);font-weight:700;font-size:clamp(15px,1.8vw,22px);
+  letter-spacing:.2em;text-transform:uppercase;margin-top:26px}
+
+/* ---------- 11 bear den ---------- */
+.den{background:var(--ink);color:var(--cream);text-align:center}
+.den h2{font-size:clamp(34px,5.6vw,78px)}
+.den p{max-width:50ch;margin:18px auto 0;color:rgba(244,237,226,.72)}
+.den form{display:flex;gap:12px;max-width:520px;margin:32px auto 0;flex-wrap:wrap;
+  justify-content:center}
+.den input{flex:1;min-width:220px;background:none;border:2px solid var(--line-dark);
+  color:var(--cream);padding:15px 18px;font:inherit;font-size:15px}
+.den input:focus{outline:none;border-color:var(--tan)}
+.den .ok{margin-top:16px;color:var(--tan);font-family:var(--display);letter-spacing:.18em;
+  font-size:12px;text-transform:uppercase;height:16px}
+
+/* ---------- 12 footer ---------- */
+footer{background:var(--coal);color:var(--cream);padding-block:clamp(46px,6vw,80px) 26px}
+.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:clamp(24px,3vw,44px)}
+.fgrid h4{font-size:12px;letter-spacing:.24em;color:rgba(244,237,226,.5);margin-bottom:16px;
+  font-weight:500}
+.fgrid a{display:block;padding-block:6px;font-size:15px;color:rgba(244,237,226,.82)}
+.fgrid a:hover{color:var(--tan)}
+.fbrand{display:flex;gap:14px;align-items:flex-start}
+.fbrand img{width:62px;height:62px;border-radius:50%;flex:none}
+.fbrand p{font-size:14.5px;color:rgba(244,237,226,.66);margin-top:8px;max-width:34ch}
+.fbot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-top:1px solid var(--line-dark);margin-top:clamp(34px,4vw,56px);padding-top:20px;
+  font-size:13px;color:rgba(244,237,226,.5)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1000px){
+  nav.main,.hd .btn{display:none}
+  .burger{display:grid}
+  .hero .grid{grid-template-columns:1fr;gap:40px}
+  .seal{left:auto;right:6px;bottom:-22px;width:106px;height:106px}
+  .making{height:auto}
+  .pin{position:static;height:auto;padding-block:40px}
+  .pin .inner{grid-template-columns:1fr;gap:26px}
+  .stage-copy{min-height:0;display:flex;flex-direction:column;gap:44px}
+  .stage-copy .st{position:static;opacity:1;transform:none}
+  .stage-media{display:none}
+  .st .m-media{display:block;aspect-ratio:5/4;overflow:hidden;margin-bottom:18px;
+    border:1px solid var(--line-dark)}
+  .st .m-media img,.st .m-media video{width:100%;height:100%;object-fit:cover}
+  .steps{display:none}
+  .making-head{position:static;margin-bottom:30px}
+  .pillars{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr;gap:26px}
+  .teaser{grid-template-columns:1fr}
+}
+@media (min-width:1001px){ .st .m-media{display:none} }
+@media (max-width:620px){
+  body{font-size:16px}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .fgrid .fbrand{grid-column:1/-1;margin-bottom:12px}
+  .hero .acts{flex-direction:column;align-items:stretch}
+  .hero .acts .btn{justify-content:center}
+  .brand b{font-size:14.5px}
+  .cue{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  [data-rv]{opacity:1;transform:none}
+  .mask span{transform:none!important}
+  .making{height:auto}
+  .pin{position:static;height:auto;padding-block:40px}
+}
+</style>
+</head>
+<body>
+
+<div id="rp"></div>
+
+<!-- ============ 01 preloader ============ -->
+<div id="pre">
+  <div class="pl">
+    <img src="images/logo-badge.png" alt="">
+    <div class="nm">Iron Bear Leather</div>
+    <div class="rail"><i></i></div>
+  </div>
+</div>
+
+<!-- ============ 02 announcement + header ============ -->
+<div class="ann">
+  <div class="track" id="annTrack">
+    <span>★ Handmade in Redwater, Texas</span><span>★ Ships in 2–3 business days</span>
+    <span>★ Full grain leather · Hand stitched</span><span>★ Custom made to fit your life</span>
+  </div>
+</div>
+
+<header id="hdr">
+  <div class="wrap hd">
+    <a href="#" class="brand">
+      <img src="images/logo-badge.png" alt="Iron Bear Leather">
+      <span><b>Iron Bear Leather</b><small>Redwater, Texas</small></span>
+    </a>
+    <nav class="main">
+      <a href="#shop">Wallets</a>
+      <a href="#craft">The Craft</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#standard">Our Standard</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#shop" class="btn">Shop <span class="arw">→</span></a>
+    <button class="burger" id="burger" aria-label="Menu"><i></i></button>
+  </div>
+</header>
+
+<div id="mob">
+  <button class="x" id="mobX" aria-label="Close">×</button>
+  <a href="#shop">Wallets</a>
+  <a href="#craft">The Craft</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#standard">Our Standard</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- ============ 03 hero ============ -->
+<section class="hero">
+  <div class="wrap grid">
+    <div>
+      <div class="eyebrow">Est. Redwater, Texas</div>
+      <h1>
+        <span class="mask"><span>Handcrafted</span></span>
+        <span class="mask"><span>Leather Goods</span></span>
+      </h1>
+      <p class="lede">Iron Bear Leather makes enduring pieces by hand, built for the road
+        and refined for everyday carry.</p>
+      <div class="acts">
+        <a href="#shop" class="btn">Explore the Collection <span class="arw">→</span></a>
+        <a href="#craft" class="btn btn--ghost">See the craft</a>
+      </div>
+    </div>
+
+    <div class="stack" id="stack">
+      <figure class="fig-a float-a" data-par="0.05">
+        <img src="images/beartrap-snap-hand.jpg" alt="Bear Trap wallet in hand, snap closed">
+      </figure>
+      <figure class="fig-b float-b" data-par="-0.07">
+        <img src="images/slim-green-hand.jpg" alt="Bear Trap Slim card wallet in forest green">
+      </figure>
+      <div class="seal">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="circ" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+          <text><textPath href="#circ" startOffset="0">
+            ★ Built to carry ★ Built to last ★ Handmade in Texas
+          </textPath></text>
+        </svg>
+        <div class="core"><img src="images/logo-badge.png" alt=""></div>
+      </div>
+    </div>
+  </div>
+  <div class="cue"><i></i> Scroll</div>
+</section>
+
+<!-- ============ 04 marquee band ============ -->
+<div class="band">
+  <div class="track" id="bandTrack">
+    <span>Full Grain</span><span>Hand Stitched</span><span>Brass Hardware</span>
+    <span>Built to Last</span><span>Made in Texas</span>
+  </div>
+</div>
+
+<!-- ============ 05 collection ============ -->
+<section class="sec" id="shop">
+  <div class="wrap">
+    <div class="sec-head" data-rv>
+      <div>
+        <div class="eyebrow">The Collection</div>
+        <h2>Built by hand.<br>Made to last.</h2>
+      </div>
+      <p>Quality leather. Crafted with purpose. Built for a lifetime. Every piece is cut,
+        stitched and finished by hand in Redwater, Texas.</p>
+    </div>
+
+    <div class="rail-wrap" data-rv>
+      <div class="scroller" id="scroller"><!-- cards injected --></div>
+      <div class="rail-ui">
+        <div class="rail"><i id="railFill"></i></div>
+        <div class="arrows">
+          <button id="prev" aria-label="Previous">←</button>
+          <button id="next" aria-label="Next">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 the making ============ -->
+<section class="making" id="craft">
+  <div class="pin">
+    <div class="wrap making-head" data-rv>
+      <div class="eyebrow">The Making</div>
+    </div>
+    <div class="wrap inner">
+      <div class="stage-copy" id="stageCopy">
+
+        <div class="st on">
+          <div class="m-media"><img src="images/tooled-panel-flat.jpg" alt="Tooled leather panel"></div>
+          <div class="num">01</div>
+          <h3>Cut and tool</h3>
+          <p>Full grain leather picked by hand off the hide and cut to pattern — then tooled
+            where the piece calls for it, one stamped impression at a time.</p>
+        </div>
+
+        <div class="st">
+          <div class="m-media">
+            <video src="images/bench-stitching.mp4" poster="images/bench-stitching-poster.jpg"
+                   muted loop playsinline preload="none"></video>
+          </div>
+          <div class="num">02</div>
+          <h3>Stitch it by hand</h3>
+          <p>Saddle stitched two needles at a time — the seam that does not unravel when one
+            thread gives. No machine shortcuts, no skipped passes.</p>
+        </div>
+
+        <div class="st">
+          <div class="m-media"><img src="images/beartrap-closed-hand.jpg" alt="Bear Trap wallet closed"></div>
+          <div class="num">03</div>
+          <h3>Set the hardware</h3>
+          <p>Solid snaps set and seated by hand so the flap closes the same on day one and
+            year ten. Contrast thread is picked to order.</p>
+        </div>
+
+        <div class="st">
+          <div class="m-media"><img src="images/beartrap-stack-hand.jpg" alt="Finished Bear Trap wallets"></div>
+          <div class="num">04</div>
+          <h3>Burnish and finish</h3>
+          <p>Edges bevelled, sanded and burnished until they are smooth to the thumb, then
+            sealed. It leaves the bench only when it is right.</p>
+        </div>
+
+        <div class="steps" id="steps">
+          <button data-i="0" class="on">01 Cut</button>
+          <button data-i="1">02 Stitch</button>
+          <button data-i="2">03 Hardware</button>
+          <button data-i="3">04 Finish</button>
+        </div>
+      </div>
+
+      <div class="stage-media" id="stageMedia">
+        <div class="md on"><img src="images/tooled-panel-flat.jpg" alt="Tooled leather panel"></div>
+        <div class="md">
+          <video id="benchVid" src="images/bench-stitching.mp4"
+                 poster="images/bench-stitching-poster.jpg" muted loop playsinline
+                 preload="none"></video>
+        </div>
+        <div class="md"><img src="images/beartrap-closed-hand.jpg" alt="Bear Trap wallet closed in hand"></div>
+        <div class="md"><img src="images/beartrap-stack-hand.jpg" alt="Two finished Bear Trap wallets"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 the iron bear standard ============ -->
+<section class="sec" id="standard">
+  <div class="wrap">
+    <div class="sec-head" data-rv>
+      <div>
+        <div class="eyebrow">The Iron Bear Standard</div>
+        <h2>Quality you can feel.<br>Craftsmanship you can trust.</h2>
+      </div>
+      <p>From the first cut to the final stitch, every Iron Bear piece is made by hand with
+        one thing in mind: a lifetime of use.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar" data-rv>
+        <div class="ic">◈</div>
+        <h3>Designed for durability</h3>
+        <p>Full grain leather and saddle stitching, chosen because they outlast the wearer,
+          not because they are quick.</p>
+      </div>
+      <div class="pillar" data-rv style="transition-delay:.08s">
+        <div class="ic">▣</div>
+        <h3>Built for everyday carry</h3>
+        <p>Slim enough for a front pocket, deep enough for everything you actually carry.
+          Tested in real pockets, not on a bench.</p>
+      </div>
+      <div class="pillar" data-rv style="transition-delay:.16s">
+        <div class="ic">★</div>
+        <h3>Handcrafted. Rugged.</h3>
+        <p>Cut, stitched and burnished one at a time in Redwater, Texas — custom made to fit
+          your life.</p>
+      </div>
+    </div>
+
+    <div class="stats" data-rv>
+      <div class="stat"><b data-count="4.83" data-dec="2">0</b><span>Average rating</span></div>
+      <div class="stat"><b data-count="100" data-suf="%">0</b><span>Hand stitched</span></div>
+      <div class="stat"><b data-count="3" data-pre="2–">0</b><span>Day dispatch</span></div>
+      <div class="stat"><b data-count="1" data-suf="">0</b><span>Piece at a time</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 reviews ============ -->
+<section class="sec reviews" id="reviews">
+  <div class="wrap">
+    <div class="rv-top" data-rv>
+      <div>
+        <div class="eyebrow">Verified buyers</div>
+        <h2 style="font-size:clamp(36px,5.4vw,72px);margin-top:16px">Customers are saying</h2>
+      </div>
+      <div class="score">
+        <b>4.83</b>
+        <div>
+          <div class="stars">★★★★★</div>
+          <small>6 verified reviews</small>
+        </div>
+      </div>
+    </div>
+    <div class="rv-scroller" id="rvScroller"><!-- reviews injected --></div>
+  </div>
+</section>
+
+<!-- ============ 09 tooled teaser ============ -->
+<section class="teaser">
+  <div class="pic"><img src="images/tooled-purse-bench.jpg" alt="Hand tooled sunflower purse panel on the workbench"></div>
+  <div class="txt">
+    <div class="eyebrow" style="color:rgba(244,237,226,.85)">On the bench</div>
+    <h2>A tooled purse<br><span class="script" style="font-size:1.15em">in the works</span></h2>
+    <p>Basketweave and a hand-cut sunflower, tooled panel by panel. Handcrafted with purpose,
+      made to last — and worth the wait.</p>
+    <div><a href="#contact" class="btn btn--ghost">Tell me when it drops</a></div>
+  </div>
+</section>
+
+<!-- ============ 10 cta band ============ -->
+<section class="sec ctab">
+  <div class="wrap">
+    <h2 data-rv>Carry something built with purpose.</h2>
+    <p data-rv>From the first cut to the final stitch, every Iron Bear piece is made by hand
+      with one thing in mind: a lifetime of use.</p>
+    <div class="kick" data-rv>Built to be used. Built to be yours.</div>
+    <div data-rv style="margin-top:30px"><a href="#shop" class="btn btn--ink">Shop handcrafted leather <span class="arw">→</span></a></div>
+  </div>
+</section>
+
+<!-- ============ 11 bear den ============ -->
+<section class="sec den" id="contact">
+  <div class="wrap">
+    <div class="eyebrow" style="justify-content:center;color:rgba(244,237,226,.8)" data-rv>Newsletter</div>
+    <h2 style="margin-top:18px" data-rv>Join the Bear Den</h2>
+    <p data-rv>Be the first to know about new product drops, limited leather runs, one-off
+      pieces and shop updates.</p>
+    <form id="denForm" data-rv>
+      <input type="email" required placeholder="you@email.com" aria-label="Email">
+      <button class="btn" type="submit">— Enter the Den —</button>
+    </form>
+    <div class="ok" id="denOk"></div>
+  </div>
+</section>
+
+<!-- ============ 12 footer ============ -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fbrand">
+        <img src="images/logo-badge.png" alt="">
+        <div>
+          <b style="font-family:var(--display);letter-spacing:.16em;text-transform:uppercase">Iron Bear Leather</b>
+          <p>Handmade full grain leather goods. Cut, stitched and finished by hand in
+            Redwater, Texas.</p>
+        </div>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#shop">Bear Trap</a><a href="#shop">Bear Trap Slim</a>
+        <a href="#shop">Custom orders</a><a href="#shop">Gift cards</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#craft">The Craft</a><a href="#standard">Our Standard</a>
+        <a href="#reviews">Reviews</a><a href="#contact">Contact</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="#">Shipping — 2–3 days</a><a href="#">Returns</a>
+        <a href="#">Leather care</a><a href="#">Size guide</a>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© <span id="yr"></span> Iron Bear Leather · Redwater, Texas</span>
+      <span>Built to carry. Built to last.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   EDIT HERE — products and reviews
+   Prices are PLACEHOLDERS. Change `price` on each product.
+   ============================================================ */
+const PRODUCTS = [
+  { name:"Bear Trap",            sub:"Full grain bifold · hidden compartment", price:"$95",
+    img:"images/beartrap-snap-hand.jpg", tag:"Bestseller" },
+  { name:"Bear Trap Slim",       sub:"All bite. No bulk. Minimal card carry.",  price:"$65",
+    img:"images/slim-green-hand.jpg",    tag:"New" },
+  { name:"Bear Trap — Blue Abyss",sub:"Contrast stitch. Made to order.",        price:"$95",
+    img:"images/beartrap-pair-hand.jpg", tag:"" },
+  { name:"Bear Trap — Open View", sub:"Card slots, bill slot, secret pocket.",  price:"$95",
+    img:"images/beartrap-open-cards.jpg",tag:"" },
+  { name:"Tooled Sunflower Purse",sub:"Basketweave, hand tooled panel by panel.",price:"Coming soon",
+    img:"images/tooled-purse-bench.jpg", tag:"soon" },
+  { name:"Custom Commission",     sub:"Custom made to fit your life.",          price:"From $120",
+    img:"images/beartrap-closed-hand.jpg",tag:"" }
+];
+
+/* Real reviews as published on ironbearleather.com (4.83 average, 6 reviews). */
+const REVIEWS = [
+  { t:"Bought this one for my husband and he loves it! Craftsmanship very nice and he loved the size and secret compartment. Now he can sit normal again since it is not bulky like his old ones! Definitely will buy again from here.",
+    n:"Anonymous", p:"Bear Trap — Handmade Full Grain Leather Wallet" },
+  { t:"As a comparison to other custom wallets I’ve seen and used these are high quality! The leather and stitching are top notch with no defects. As far as the size and shape, it is by far the most comfortable wallet I have ever used and will fit in front or rear pocket no problem. I will for sure only shop with Iron Bear Leather from now on!!",
+    n:"Cody", p:"Bear Trap Slim" },
+  { t:"10/10 — Such a great quality wallet! It feels well made, looks great, and has a nice setup with plenty of room for everything you need. I would definitely buy it again! This would also make a great gift for someone. Very happy with my purchase!",
+    n:"Anonymous", p:"Bear Trap — Handmade Full Grain Leather Wallet" },
+  { t:"Awesome product. I love hand made stuff and this is very high quality to boot! I’d love to see more color options, I’d like to have gotten a gray/slate but I really like the Blue Abyss after receiving it.",
+    n:"Donald", p:"Bear Trap — Handmade Full Grain Leather Wallet" },
+  { t:"I love it!", n:"Cody Ledbetter", p:"Bear Trap — Handmade Full Grain Leather Wallet" },
+  { t:"Everything went great.", n:"Cody Ledbetter", p:"Iron Bear Leather" }
+];
+
+/* ============================================================ */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---- build cards ---- */
+document.getElementById("scroller").innerHTML = PRODUCTS.map(p => `
+  <article class="card">
+    <div class="ph">
+      ${p.tag ? `<span class="tag ${p.tag==='soon'?'soon':''}">${p.tag==='soon'?'Coming soon':esc(p.tag)}</span>` : ""}
+      <img src="${p.img}" alt="${esc(p.name)}" loading="lazy">
+    </div>
+    <h3>${esc(p.name)}</h3>
+    <p class="desc">${esc(p.sub)}</p>
+    <div class="meta"><span class="price">${esc(p.price)}</span></div>
+    <button class="cta">${p.price==="Coming soon"?"Notify me":"Add to cart"} <span>→</span></button>
+  </article>`).join("");
+
+document.getElementById("rvScroller").innerHTML = REVIEWS.map(r => `
+  <article class="rv">
+    <span class="vf">Verified</span>
+    <p>${esc(r.t)}</p>
+    <div class="who">${esc(r.n)}</div>
+    <div class="prod">${esc(r.p)}</div>
+  </article>`).join("");
+
+/* duplicate marquee tracks for a seamless loop */
+["annTrack","bandTrack"].forEach(id => {
+  const t = document.getElementById(id); t.innerHTML += t.innerHTML;
+});
+
+/* ---- preloader ---- */
+(function(){
+  const fill = document.querySelector("#pre .rail i");
+  let v = 0;
+  const tick = setInterval(() => {
+    v = Math.min(100, v + 8 + Math.random()*16);
+    fill.style.width = v + "%";
+    if (v >= 100) { clearInterval(tick); setTimeout(() => document.body.classList.add("loaded"), 260); }
+  }, 90);
+  setTimeout(() => document.body.classList.add("loaded"), 2600); // safety
+  // release the headline clip once the lines have risen
+  setTimeout(() => document.querySelector(".hero h1").classList.add("free"), 2400);
+})();
+
+/* ---- headline shrink-to-fit (safety net if the webfont is slow or blocked) ---- */
+function fitHead(){
+  const h1 = document.querySelector(".hero h1");
+  if (!h1) return;
+  h1.style.fontSize = "";
+  const lines = [...h1.querySelectorAll(".mask span")];
+  const widest = () => Math.max(...lines.map(s => s.scrollWidth));
+  let size = parseFloat(getComputedStyle(h1).fontSize), guard = 0;
+  while (widest() > h1.clientWidth && size > 26 && guard++ < 60) {
+    size -= 2; h1.style.fontSize = size + "px";
+  }
+}
+fitHead();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHead);
+addEventListener("load", fitHead);
+let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitHead, 120); });
+
+/* ---- reveal on scroll ---- */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+}, { threshold:.12, rootMargin:"0px 0px -8% 0px" });
+document.querySelectorAll("[data-rv]").forEach(el => io.observe(el));
+
+/* ---- reading progress ---- */
+const rp = document.getElementById("rp");
+function progress(){
+  const h = document.documentElement.scrollHeight - innerHeight;
+  rp.style.width = (h > 0 ? (scrollY / h) * 100 : 0) + "%";
+}
+
+/* ---- header inverts over light sections ---- */
+const hdr = document.getElementById("hdr");
+const lightSecs = [...document.querySelectorAll("#shop,#standard,.teaser,.ctab")];
+function headerTone(){
+  const y = hdr.getBoundingClientRect().bottom;
+  const over = lightSecs.some(s => { const r = s.getBoundingClientRect(); return r.top < y && r.bottom > y; });
+  hdr.classList.toggle("light", over);
+}
+
+/* ---- mobile menu ---- */
+const mob = document.getElementById("mob");
+document.getElementById("burger").onclick = () => mob.classList.add("open");
+document.getElementById("mobX").onclick  = () => mob.classList.remove("open");
+mob.querySelectorAll("a").forEach(a => a.onclick = () => mob.classList.remove("open"));
+
+/* ---- hero parallax ---- */
+const pars = [...document.querySelectorAll("[data-par]")];
+function parallax(){
+  if (RM) return;
+  pars.forEach(el => {
+    const s = parseFloat(el.dataset.par);
+    el.style.translate = "0 " + (scrollY * s).toFixed(1) + "px";
+  });
+}
+
+/* ---- horizontal scroller: arrows, drag, rail ---- */
+(function(){
+  const sc = document.getElementById("scroller"),
+        fill = document.getElementById("railFill"),
+        prev = document.getElementById("prev"), next = document.getElementById("next");
+  const step = () => sc.querySelector(".card").getBoundingClientRect().width + 22;
+  prev.onclick = () => sc.scrollBy({ left:-step(), behavior:"smooth" });
+  next.onclick = () => sc.scrollBy({ left: step(), behavior:"smooth" });
+  function rail(){
+    const max = sc.scrollWidth - sc.clientWidth;
+    const r = max > 0 ? sc.scrollLeft / max : 0;
+    // fill is 22% wide, so it can travel 78% of the rail = 354.5% of its own width
+    fill.style.transform = `translateX(${(r * 78 / 22 * 100).toFixed(2)}%)`;
+    prev.disabled = sc.scrollLeft < 4;
+    next.disabled = sc.scrollLeft > max - 4;
+  }
+  sc.addEventListener("scroll", rail, { passive:true });
+  addEventListener("resize", rail);
+  rail();
+
+  // pointer drag
+  let down = false, x0 = 0, l0 = 0, moved = 0;
+  sc.addEventListener("pointerdown", e => {
+    if (e.target.closest("button")) return;
+    down = true; moved = 0; x0 = e.clientX; l0 = sc.scrollLeft; sc.classList.add("drag");
+  });
+  addEventListener("pointermove", e => {
+    if (!down) return;
+    const d = e.clientX - x0; moved = Math.abs(d); sc.scrollLeft = l0 - d;
+  });
+  addEventListener("pointerup", () => {
+    if (!down) return; down = false; sc.classList.remove("drag");
+  });
+  sc.addEventListener("click", e => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+})();
+
+/* same drag behaviour for the reviews rail */
+(function(){
+  const sc = document.getElementById("rvScroller");
+  let down = false, x0 = 0, l0 = 0;
+  sc.addEventListener("pointerdown", e => { down = true; x0 = e.clientX; l0 = sc.scrollLeft; sc.style.cursor="grabbing"; });
+  addEventListener("pointermove", e => { if (down) sc.scrollLeft = l0 - (e.clientX - x0); });
+  addEventListener("pointerup", () => { down = false; sc.style.cursor="grab"; });
+})();
+
+/* ---- scroll-pinned "The Making" ---- */
+const making = document.querySelector(".making"),
+      sts = [...document.querySelectorAll("#stageCopy .st")],
+      mds = [...document.querySelectorAll("#stageMedia .md")],
+      stepBtns = [...document.querySelectorAll("#steps button")],
+      bench = document.getElementById("benchVid");
+let stage = -1;
+function setStage(i){
+  if (i === stage) return;
+  stage = i;
+  sts.forEach((s,n) => s.classList.toggle("on", n === i));
+  mds.forEach((m,n) => m.classList.toggle("on", n === i));
+  stepBtns.forEach((b,n) => b.classList.toggle("on", n === i));
+  if (bench) { if (i === 1) { bench.preload = "auto"; bench.play().catch(()=>{}); } else bench.pause(); }
+}
+function pinScroll(){
+  if (RM || innerWidth <= 1000) return;
+  const r = making.getBoundingClientRect();
+  const total = making.offsetHeight - innerHeight;
+  const ratio = Math.min(.9999, Math.max(0, -r.top / total));
+  setStage(Math.floor(ratio * 4));
+}
+stepBtns.forEach(b => b.onclick = () => {
+  const i = +b.dataset.i;
+  const total = making.offsetHeight - innerHeight;
+  scrollTo({ top: making.offsetTop + total * (i / 4) + 20, behavior:"smooth" });
+  setStage(i);
+});
+/* below 1000px each stage plays its own media when it scrolls in */
+if (innerWidth <= 1000) {
+  const vio = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target.querySelector("video"); if (!v) return;
+    if (e.isIntersecting) { v.preload = "auto"; v.play().catch(()=>{}); } else v.pause();
+  }), { threshold:.4 });
+  sts.forEach(s => vio.observe(s));
+}
+
+/* ---- count-up stats ---- */
+const cio = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  const el = e.target, to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0),
+        pre = el.dataset.pre || "", suf = el.dataset.suf || "";
+  let t0 = null;
+  const run = ts => {
+    t0 = t0 || ts;
+    const k = Math.min(1, (ts - t0) / 1100), e2 = 1 - Math.pow(1 - k, 3);
+    el.textContent = pre + (to * e2).toFixed(dec) + suf;
+    if (k < 1) requestAnimationFrame(run);
+  };
+  requestAnimationFrame(run);
+  cio.unobserve(el);
+}), { threshold:.5 });
+document.querySelectorAll("[data-count]").forEach(el => cio.observe(el));
+
+/* ---- newsletter (demo only — no backend) ---- */
+document.getElementById("denForm").addEventListener("submit", e => {
+  e.preventDefault();
+  document.getElementById("denOk").textContent = "You're in the den. Welcome.";
+  e.target.reset();
+});
+
+/* ---- scroll loop ---- */
+let ticking = false;
+addEventListener("scroll", () => {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => { progress(); headerTone(); parallax(); pinScroll(); ticking = false; });
+}, { passive:true });
+addEventListener("resize", () => { headerTone(); pinScroll(); });
+progress(); headerTone(); pinScroll(); setStage(0);
+
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
